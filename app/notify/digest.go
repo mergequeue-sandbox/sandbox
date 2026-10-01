@@ -12,7 +12,7 @@ func Digest(ts []tasks.Task) string {
 	var b strings.Builder
 	for _, t := range ts {
 		if !t.Done {
-			b.WriteString("• " + tasks.Title(t) + "\n")
+			b.WriteString("• " + tasks.DisplayTitle(t) + "\n")
 		}
 	}
 	return b.String()
