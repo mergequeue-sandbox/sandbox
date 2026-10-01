@@ -12,7 +12,11 @@ type Task struct {
 	Done bool
 }
 
-// Title is how a task is shown in lists and notifications.
-func Title(t Task) string {
+// DisplayTitle is how a task is shown in lists and notifications. Done
+// tasks get a check mark.
+func DisplayTitle(t Task) string {
+	if t.Done {
+		return fmt.Sprintf("✓ #%d %s", t.ID, t.Name)
+	}
 	return fmt.Sprintf("#%d %s", t.ID, t.Name)
 }
