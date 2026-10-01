@@ -27,6 +27,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # app/ is a small Go module, so the sandbox can show a semantic
+      # conflict: two PRs that pass on their own and break develop together.
+      - uses: actions/setup-go@v5
+        if: hashFiles('app/go.mod') != ''
+        with:
+          go-version: stable
+          cache: false
+      - name: Go tests
+        if: hashFiles('app/go.mod') != ''
+        working-directory: app
+        run: go vet ./... && go test ./...
       # ci/status controls the outcome: PASS, FAIL, or FLAKY (fails on the
       # first attempt only, so "re-run failed jobs" passes).
       # ci/sleep sets how long the job takes, in seconds.
