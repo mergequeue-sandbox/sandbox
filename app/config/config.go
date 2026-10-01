@@ -2,4 +2,4 @@
 package config
 
 // PageSize is how many items a list endpoint returns.
-const PageSize = 50
+const PageSize = 200
