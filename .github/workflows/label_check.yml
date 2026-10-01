@@ -1,0 +1,17 @@
+# Mirrors projectsapigo's pr_label_check.yml: a required check that only runs
+# on pull_request, so it never appears on a merge-queue candidate commit.
+name: PR - Label check
+on:
+  pull_request:
+    types: [opened, reopened, edited, labeled, unlabeled, ready_for_review, synchronize]
+
+jobs:
+  check_labels:
+    runs-on: ubuntu-latest
+    name: label-check
+    steps:
+      - name: Require the "ready" label
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'ready') }}
+        run: |
+          echo 'Add the "ready" label to this PR.'; exit 1
+      - run: echo ok

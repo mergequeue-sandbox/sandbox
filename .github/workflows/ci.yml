@@ -1,0 +1,41 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - 'mq/**'
+
+# Same shape as projectsapigo's pr_check.yml: one group per ref, so candidate
+# branches (mq/develop/<run-id>) never cancel each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if ci/lint says FAIL
+        run: |
+          if grep -qx FAIL ci/lint 2>/dev/null; then
+            echo "ci/lint says FAIL"; exit 1
+          fi
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ci/status controls the outcome: PASS, FAIL, or FLAKY (fails on the
+      # first attempt only, so "re-run failed jobs" passes).
+      # ci/sleep sets how long the job takes, in seconds.
+      - name: Run tests
+        run: |
+          sleep "$(cat ci/sleep 2>/dev/null || echo 60)"
+          status="$(cat ci/status 2>/dev/null || echo PASS)"
+          echo "status=$status attempt=${{ github.run_attempt }}"
+          case "$status" in
+            FAIL) exit 1 ;;
+            FLAKY) [ "${{ github.run_attempt }}" -gt 1 ] || exit 1 ;;
+          esac
