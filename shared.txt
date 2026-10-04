@@ -1,4 +1,4 @@
 # Two PRs editing the same line here produce a merge conflict.
-AAA
+conflict-a
 line 2
 line 3
