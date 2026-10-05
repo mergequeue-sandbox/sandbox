@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - develop
-      - 'mq/**'
+      - 'mq-readonly-queue/**'
 
 # Same shape as projectsapigo's pr_check.yml: one group per ref, so candidate
-# branches (mq/develop/<run-id>) never cancel each other.
+# branches (mq-readonly-queue/develop/<N>-<millis>) never cancel each other.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
